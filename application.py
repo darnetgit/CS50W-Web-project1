@@ -29,10 +29,10 @@ KEY = os.getenv("API_KEY")
 
 @app.route("/")
 def default():
-    if session['username']:
+    if session.get('username'):
         return redirect(url_for("search"))
     else:
-        return redirect(url_for("login"), hide_login_error="hidden")
+        return redirect(url_for("login"))
 
 
 @app.route("/logout")
@@ -74,7 +74,7 @@ def display_book(id):
         if (request.form.get('submit)')):
             review = request.form.get('review')
             db.execute("INSERT INTO reviews (isbn, reviewer_id,review) VALUES (:isbn, :userID, :review)",
-                       {"isbn": id, "userID": session['userID'], "review": review})
+                       {"isbn": id, "userID": session.get('userID'), "review": review})
             db.commit()
             return render_template("bookpage.html", book=book_info, reviews=getreviews(id))
     else:
@@ -107,7 +107,7 @@ def search():
 
 @app.route("/register", methods=["GET", "POST"])
 def register():
-    if session['logged_in']:
+    if session.get('logged_in'):
         return redirect(url_for("search"))
     elif request.method == "POST":
         fname = request.form['firstname']
@@ -127,7 +127,7 @@ def register():
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
-    if session['logged_in']:
+    if session.get('logged_in'):
         return redirect(url_for("search"))
     if request.method == "POST":
         uname = request.form['username']
