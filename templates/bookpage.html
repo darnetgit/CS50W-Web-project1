@@ -1,0 +1,70 @@
+{% extends "layout.html" %}
+
+{% block title %}
+Home
+{% endblock %}
+
+{% block search %}
+<form id="search-form" class="form m-0" action="" method="post">
+    <div class="form-group d-inline-block m-0">
+        <input type="text" name="search_for" id="search_for" class="form-control"
+               placeholder="Search books by title, author, or ISBN " required minlength="2">
+    </div>
+    <div class="form-group text-center d-inline-block m-0">
+        <input type="submit" name="search" class="btn btn-info btn-md" value="Search">
+    </div>
+</form>
+{% endblock %}
+
+{% block body %}
+<h3 class="text-center text-primary">{{book.title}}</h3>
+</br>
+<div class="book-info">
+    <div class="splitscreen">
+        <h5 class="text-center text-info">Goodreads info</h5>
+        <div class="text-center">By: {{book.author}}</div>
+        <img class="d-block mx-auto" src="{{book.IMG}}">
+        <div class="star-ratings-sprite">
+            <span style="width:{{book.avg_rating}}%" class="star-ratings-sprite-rating"></span>
+        </div>
+        <div class="text-center">Publication year:
+            {{book.publication_year}}
+        </div>
+        <div class="text-center"> ISBN: {{book.ISBN}}</div>
+    </div>
+    <div class="splitscreen">
+        <h5 class="text-center text-info">Book summery</h5>
+        <div style="height:240px; overflow:auto">
+            {{book.summery_preview}}
+        </div>
+    </div>
+    <!--    <button>show more</button>-->
+    <!--    <div>{{book.summery_all}}</div>-->
+</div>
+</br>
+<div class="reviews">
+    <div class="splitscreen">
+        <h5 class="text-center text-info">User reviews</h5>
+        <div class="text-center">
+            {% if reviews %}
+            {% for review in reviews %}
+            {{review.username}}: {{review.review}}</br>
+            {% endfor %}
+            {% else %}
+            no review yet. be the first to review!
+            {% endif %}
+        </div>
+    </div>
+    <form id="review-form" class="form splitscreen" action="" method="post">
+        <h5 class="text-center text-info">Submit review</h5>
+        <div class="form-group">
+            <textarea type="text" name="review" id="review" class="form-control" rows="4"
+                      placeholder="please leave your review" required minlength="10"></textarea>
+        </div>
+        <div class="form-group text-center">
+            <input type="submit" name="submit" class="btn btn-info btn-md" value="Submit">
+        </div>
+    </form>
+</div>
+
+{% endblock %}

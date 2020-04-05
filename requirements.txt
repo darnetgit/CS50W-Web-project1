@@ -1,0 +1,8 @@
+untangle
+Flask
+Flask-Session
+psycopg2-binary
+SQLAlchemy
+ItsDangerous
+Werkzeug==0.16.0
+requests

@@ -1,0 +1,31 @@
+{% extends "layout.html" %}
+
+{% block title %}
+Home
+{% endblock %}
+
+{% block body %}
+<form id="search-form" class="form" action="" method="post">
+    <h3 class="text-center text-info">Search</h3>
+    <div class="form-group">
+        <input type="text" name="search_for" id="search_for" class="form-control"
+               placeholder="Search books by title, author, or ISBN " required minlength="2">
+    </div>
+    <div class="form-group text-center">
+        <input type="submit" name="submit" class="btn btn-info btn-md" value="Search">
+    </div>
+</form>
+{% for elem in why %}
+{% for inside in elem %}
+<div>{{inside.best_book.title.cdata}}</div>
+<div>By: {{inside.best_book.author.name.cdata}}</div>
+<img src="{{inside.best_book.small_image_url.cdata}}">
+<!--            <div>Publication date:-->
+<!--            {{inside.original_publication_day.cdata}}.{{inside.original_publication_month.cdata}}.{{inside.original_publication_year.cdata}}-->
+<!--            </div>-->
+<div> Average rating: {{inside.average_rating.cdata}}</div>
+<a class="btn btn-sm btn-outline-secondary ml-auto mr-1" href="../bookpage/{{inside.best_book.id.cdata}}">Book info</a>
+</br></br>
+{% endfor %}
+{% endfor %}
+{% endblock %}
