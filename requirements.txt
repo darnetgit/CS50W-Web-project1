@@ -6,3 +6,4 @@ SQLAlchemy
 ItsDangerous
 Werkzeug==0.16.0
 requests
+gunicorn
