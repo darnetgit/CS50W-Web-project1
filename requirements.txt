@@ -1,3 +1,4 @@
+lxml
 untangle
 Flask
 Flask-Session
