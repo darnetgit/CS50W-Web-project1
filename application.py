@@ -71,7 +71,7 @@ def display_book(id):
     if request.method == "POST":
         if (request.form.get('search')):
             return redirect(url_for(".search_str", str=request.form.get('search_for')))
-        if (request.form.get('submit)')):
+        if (request.form.get('submit')):
             review = request.form.get('review')
             db.execute("INSERT INTO reviews (isbn, reviewer_id,review) VALUES (:isbn, :userID, :review)",
                        {"isbn": id, "userID": session.get('userID'), "review": review})
