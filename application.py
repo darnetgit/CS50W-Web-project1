@@ -1,6 +1,6 @@
 import os
 import untangle
-from flask import Flask, session, render_template, request, url_for, flash
+from flask import Flask, session, render_template, request, url_for, flash, jsonify
 from flask_session import Session
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
@@ -62,7 +62,7 @@ def display_book(id):
 
     def getreviews(bookid):
         return db.execute(
-            "SELECT users.username, reviews.review FROM reviews JOIN users on reviews.reviewer_id=users.id WHERE reviews.isbn = :bookid",
+            "SELECT users.username, reviews.review FROM reviews JOIN users on reviews.reviewer_id=users.id WHERE reviews.id = :bookid",
             {"bookid": bookid}).fetchall()
 
     url = "https://www.goodreads.com/book/show.xml?key=" + KEY + "&id=" + id
@@ -73,8 +73,8 @@ def display_book(id):
             return redirect(url_for(".search_str", str=request.form.get('search_for')))
         if (request.form.get('submit')):
             review = request.form.get('review')
-            db.execute("INSERT INTO reviews (isbn, reviewer_id,review) VALUES (:isbn, :userID, :review)",
-                       {"isbn": id, "userID": session.get('userID'), "review": review})
+            db.execute("INSERT INTO reviews (isbn, id, reviewer_id,review) VALUES (:isbn, :id, :userID, :review)",
+                       {"isbn": book_info['ISBN'], "id": id, "userID": session.get('userID'), "review": review})
             db.commit()
             return render_template("bookpage.html", book=book_info, reviews=getreviews(id))
     else:
@@ -87,11 +87,10 @@ def search_str(str):
         return redirect(url_for(".search_str", str=request.form.get('search_for')))
     else:
         str = str.replace(" ", "%20")
-        urll = "https://www.goodreads.com/search/index.xml?key=" + KEY + "&q=" + str
-        result = untangle.parse(urll)
+        url = "https://www.goodreads.com/search/index.xml?key=" + KEY + "&q=" + str
+        result = untangle.parse(url)
         inside = result.GoodreadsResponse.search.results
-        return render_template("search.html", why=inside.children)
-
+        return render_template("search.html", results=inside.children)
 
 @app.route("/search", methods=["GET", "POST"])
 def search():
@@ -144,3 +143,18 @@ def login():
             return redirect(url_for("search"))
     else:
         return render_template("login.html")
+
+
+@app.route("/api/<isbn>", methods=['GET'])
+def api(isbn):
+    book = db.execute("SELECT isbn FROM books WHERE books.isbn = :isbn", {"isbn": isbn})
+    if book.rowcount == 0:
+        return jsonify({"error": "no such book ISBN in our database"})
+    result = db.execute(
+        "SELECT books.isbn, COUNT(reviews.review) as num_of_reviews FROM books JOIN reviews ON books.isbn = reviews.isbn WHERE books.isbn = :isbn GROUP BY books.isbn",
+        {"isbn": isbn})
+    if result.rowcount == 0:
+        return jsonify({"message": "no reviews yet"})
+    data = result.fetchone()
+    api_data = dict(data.items())
+    return jsonify(api_data)

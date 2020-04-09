@@ -31,10 +31,10 @@ def main():
 # db.commit()
 
 # reviews table
-# db.execute("DROP TABLE IF EXISTS reviews")
-# db.commit()
-# db.execute("CREATE TABLE reviews (isbn VARCHAR NOT NULL, reviewer_id INTEGER REFERENCES users, review VARCHAR NOT NULL);")
-# db.commit()
+#     db.execute("DROP TABLE IF EXISTS reviews")
+#     db.commit()
+#     db.execute("CREATE TABLE reviews (isbn VARCHAR NOT NULL, id VARCHAR NOT NULL, reviewer_id INTEGER REFERENCES users, review VARCHAR NOT NULL);")
+#     db.commit()
 
 if __name__ == "__main__":
     main()
